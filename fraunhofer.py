@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy.fft import fft2, fftshift
 import math
+import cmath
 
 GRAPH_WIDTH = 10e3 * 2
 GRAPH_HIGHT = 10e3 * 2
@@ -57,7 +58,7 @@ E_inc = np.ones(SIZE, dtype='complex_')
 ########################
 # E(u,v,0)
 ########################
-E_0 = 1 * T[u][v]
+E_0 = 1 * T
 
 
 ########################
@@ -91,17 +92,18 @@ X, Y = np.meshgrid(x,y)
 E_sphere = np.zeros(X.shape, dtype='complex_')
 
 for i in range(len(X)):
-	for j in range(len(X[i])):
-		x = X[i][j]
-		y = Y[i][j]
-		E_sphere[i][j] = (1/z) * (math.e**(-j*k*z)) * \
-        (math.e**(-j*k*(math.sqrt(x**2+y**2))/(2*z)))
+	for m in range(len(X[i])):
+		x = X[i][m]
+		y = Y[i][m]
+		E_sphere[i][m] = (1/z) * (cmath.exp(-1j*k*z)) * \
+                        (cmath.exp(-1j*k*(x**2+y**2))/(2*z))
+         
 
 
 ########################
 # E(x,y,z)
 ########################
-E = E_sphere * S
+E = (j/wave_length) * E_sphere * S
 
 
 ########################
@@ -112,4 +114,5 @@ I = np.abs(E)
 
 fig.add_subplot(1,2,2)
 plt.imshow(I, cmap='gray', extent=[-SCREEN_WIDTH//2, SCREEN_WIDTH//2,-SCREEN_HIGHT//2, SCREEN_HIGHT//2])
+plt.savefig('diff.png')
 plt.show()
