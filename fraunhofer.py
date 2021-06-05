@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.fft import fft2, fftshift
+import math
 
 GRAPH_WIDTH = 10e3 * 2
 GRAPH_HIGHT = 10e3 * 2
@@ -11,27 +12,25 @@ v = np.arange(-GRAPH_HIGHT//2, GRAPH_HIGHT//2, RESOLUSION)
 U, V = np.meshgrid(u, v)
 
 #####################
-# definitions (in micons)
+# definitions (in microns)
 #####################
-wave_length = # ??? 0.6BA 
-k = # ???
+wave_length = 0.649 
+k = 2*math.pi/wave_length
 
 z_meters = 0.1
 z = z_meters * 1e6
-
 
 #####################
 # transfer function
 #####################
 
-# def two_slit(u, v):
-# 	pass
-
-# def circle(u,v):
-# 	pass
-
-# def rect(u):
-# 	pass
+def circle(u,v):
+    R = 500
+    r = math.sqrt(u**2 + v**2)
+    if (r <= R):
+        return 1
+    else:
+        return 0
 
 T = np.copy(U)
 SIZE = np.shape(T)
@@ -41,7 +40,7 @@ for i in range(len(U)):
 		u = U[i][j]
 		v = V[i][j]
 		
-		#T[i][j] = ???
+		T[i][j] = circle(u,v)
 
 
 #########################
@@ -58,7 +57,7 @@ E_inc = np.ones(SIZE, dtype='complex_')
 ########################
 # E(u,v,0)
 ########################
-E_0 = # ???
+E_0 = 1 * T[u][v]
 
 
 ########################
@@ -95,13 +94,14 @@ for i in range(len(X)):
 	for j in range(len(X[i])):
 		x = X[i][j]
 		y = Y[i][j]
-		E_sphere[i][j] = # ???
+		E_sphere[i][j] = (1/z) * (math.e**(-j*k*z)) * \
+        (math.e**(-j*k*(math.sqrt(x**2+y**2))/(2*z)))
 
 
 ########################
 # E(x,y,z)
 ########################
-E = #???
+E = E_sphere * S
 
 
 ########################
